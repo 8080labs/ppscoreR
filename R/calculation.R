@@ -2,6 +2,10 @@ CV_ITERATIONS <- 4
 
 NUMERIC_AS_CATEGORIC_BREAKPOINT <- 15
 
+calculate_model_cv_score <- function(df, target, feature, metric, model) {
+
+}
+
 normalized_mae_score <- function(model_mae, naive_mae) {
   ### Normalize the model MAE score, given the baseline score
   ## Value range of MAE is [0, infinity), 0 is best
@@ -52,6 +56,10 @@ f1_normalizer <- function(df, y, model_score) {
   return(f1_normalizer_returnlist)
 }
 
+infer_task <- function(df, x, y) {
+
+}
+
 feature_is_id <- function(df, x) {
   ## Returns Boolean if t he feature column x is an ID
   if (#TODO) {
@@ -60,4 +68,20 @@ feature_is_id <- function(df, x) {
   category_count = length(unique(na.omit(df[x])))
   return(category_count == nrow(df[x]))
 }
+
+maybe_sample <- function(df, sample) {
+
+}
+
+#' @export
+score <- function(df, x, y, task = NULL, sample = 5000) {
+
+}
+
+#' @export
+matrix <- function(df, output = "df") {
+
+}
+
+
 
