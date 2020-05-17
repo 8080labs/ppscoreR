@@ -56,6 +56,39 @@ f1_normalizer <- function(df, y, model_score) {
   return(f1_normalizer_returnlist)
 }
 
+TASKS = list(
+  "regression" = list(
+    "metric_name" = "mean absolute error",
+    "metric_key" = "neg_mean_absolute_error",
+    "mdodel" = #TODO:add,
+    "score_normalizer" = "mae_normalizer"
+    ),
+   "classification" = list(
+     "metric_name" = "weighted F1",
+     "metric_key" = "f1_weighted",
+     "mdodel" = #TODO: add,
+     "score_normalizer" = "f1_normalizer"
+   ),
+   "predict_itself" = list(
+     "metric_name" = NULL,
+     "metric_key" = NULL,
+     "mdodel" = NULL,
+     "score_normalizer" = NULL
+   ),
+   "predict_constant" = list(
+     "metric_name" = NULL,
+     "metric_key" = NULL,
+     "mdodel" = NULL,
+     "score_normalizer" = NULL
+   ),
+   "oredict_id" = list(
+     "metric_name" = NULL,
+     "metric_key" = NULL,
+     "mdodel" = NULL,
+     "score_normalizer" = NULL
+   )
+)
+
 infer_task <- function(df, x, y) {
   ## Returns str with the name of the inferred task based on the columns x and y
   if (x == y) {
@@ -69,15 +102,23 @@ infer_task <- function(df, x, y) {
   if (category_count == 2) {
     return("classification")
   }
-  if (category_count == nrow(df[y]) & ) {
+  if (category_count == nrow(df[y]) & (class(df[[y]]) == "character" | class(df[[y]]) == "factor")) {
     #TODO:is_string_dtype or is_categorical_dtype)
     return("predict_id")
   }
-  if (category_count <= NUMERIC_AS_CATEGORIC_BREAKPOINT & ) {
+  if (category_count <= NUMERIC_AS_CATEGORIC_BREAKPOINT & class(df[[y]]) == "numeric") {
     #TODO:is_numeric_dtype
     return("classification")
   }
 
+  if (class(df[[y]]) == "logical" | class(df[[y]]) == "character" | class(df[[y]]) == "factor") {
+    return("classification")
+  }
+  #TODO: raise exceptions
+
+  if (class(df[[y]]) == "numeric") {
+    return("regression")
+  }
 }
 
 
@@ -85,7 +126,7 @@ infer_task <- function(df, x, y) {
 
 feature_is_id <- function(df, x) {
   ## Returns Boolean if t he feature column x is an ID
-  if (#TODO) {
+  if (class(df[[x]]) == "character" | class(df[[x]]) == "factor") {
     return(FALSE)
   }
   category_count = length(unique(na.omit(df[x])))
@@ -196,6 +237,9 @@ matrix <- function(df, output = "df") {
 
   if (output = "df") {
     #TODO
+    matrix =
+    colnames(matrix) = columns
+    return(matrix)
   }
   else {
     return(data)
