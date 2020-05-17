@@ -1,14 +1,27 @@
 Package: ppscore
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: An R implementation of the Predictive Power Score (PPS)
+Version: 0.1.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    c(person(given = "Wetschoreck",
+           family = "Florian",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "florian@8080labs.com"),
+      person(given = "Krabel",
+           family = "Tobias",
+           role = c("aut", "cre"),
+           email = "tobias.krabel@8080labs.com"),
+      person(given = "Hoang Anh",
+           family = "Ngo",
+           role = "cre",
+           email = "hoanganhngo610@gmail.com"))
+Maintainer: c(Tobias Krabel <tobias.krabel@8080labs.com>, 
+              Hoang Anh Ngo <hoanganhngo610@gmail.com>)
+Description: The PPS is an asymmetric, data-type-agnostic score that can detect linear or non-linear relationships between two columns. 
+    The score ranges from 0 (no predictive power) to 1 (perfect predictive power). 
+    It can be used as an alternative to the correlation (matrix).
 License: MIT + file LICENSE
+Depends:
+    R (>= 3.2)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -17,3 +30,5 @@ Imports:
     hydroGOF
 Suggests: 
     testthat
+VignetteBuilder: knitr
+URL: https://github.com/8080labs/ppscoreR
