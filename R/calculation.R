@@ -160,8 +160,19 @@ score <- function(df, x, y, task = NULL, sample = 5000) {
     #TODO
     #ppscore, baseline_score = task["score_normalizer"](df, y, model_score)
   }
-  #TODO
-  return()
+
+  return(
+    list(
+      "x" = x,
+      "y" = y,
+      "task" = task_name,
+      "ppscore" = ppscore,
+      "metric" = task$metric_name,
+      "baseline_score" = baseline_score,
+      "model_score" = abs(model_score),
+      "model" = task$model
+    )
+  )
 }
 
 #' Calculate the Predictive Power Score (PPS) natrix for all columns in the data frame

@@ -30,20 +30,30 @@ test_that("test infer_task", {
   # classification because numeric but few categories
   expect_match(infer_task(df, "Age", "SibSp"), "classification")
 
-  #TODO
-  df["Pclass_category"] =
+  df["Pclass_category"] = as.factor(df['Pclass'])
   expect_match(infer_task(df, "Age", "Pclass_category"), "classification")
 
-  #TODO
-  df["Pclass_datetime"] =
+  df["Pclass_datetime"] = as.Date(df['Pclass'])
+  #TODO: raise exception
 
   expect_match(infer_task(df, "Survived", "Age"), "regression")
 
 })
 
 test_that("test score", {
-  df = data.frame()
-  #TODO: modify data frame
+  x <- runif(1000, -2, 2)
+  error <- runif(1000, -0.5, 0.5)
+  y <- x * x + error
+  df <- data.frame(x, error, y)
+
+  df['constant'] <- 1
+  rownames(df) <- NULL
+  df['id'] <- as.character(rownames(df))
+
+  df['x_greater_0'] <- df['x'] > 0
+  df['x_greater_0'] <- as.character(df['x_greater_9'])
+
+  df['nan'] <- NA
   #TODO: raise exception
 
   expect_match(score(df, "x", "y", "regression")$task, "regression")
@@ -65,8 +75,11 @@ test_that("test score", {
 })
 
 test_that("test matrix", {
-  df =
+
   df = df[c("Age", "Survived")]
+
+  expect_match(class(matrix(df)), "data.frame")
+  expect_match(class(matrix(df, output = "list")), "list")
 
   #TODO
 })

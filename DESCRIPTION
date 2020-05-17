@@ -29,6 +29,8 @@ RoxygenNote: 7.1.0.9000
 Imports: 
     hydroGOF
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/8080labs/ppscoreR
