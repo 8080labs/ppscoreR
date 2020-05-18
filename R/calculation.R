@@ -133,8 +133,18 @@ feature_is_id <- function(df, x) {
   return(category_count == nrow(df[x]))
 }
 
+#' Maybe samples the row of the given df to have at most `sample` rows
+#'
+#' If sample is `NULL` or falsy, there will be no sampling. \cr
+#' If the df has fewer rows than the sample, there will be no sampling
+#' @param df `data.frame`. Data frame  that might be sampled
+#' @param sample `int` or `NULL`. Number of rows to be sampled
+#' @return `data.frame`. A data frame after potential sampling
 maybe_sample <- function(df, sample) {
-
+  if (sample & nrow(df) > sample) {
+    df <- df[sample(nrow(df), sample), ]
+  }
+  return(df)
 }
 
 #' Calculate the Predictive Power Score (PPS) for "x predicts y"

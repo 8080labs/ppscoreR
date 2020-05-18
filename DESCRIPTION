@@ -31,6 +31,9 @@ Imports:
 Suggests: 
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    sinew,
+    docthis,
+    tidyverse
 VignetteBuilder: knitr
 URL: https://github.com/8080labs/ppscoreR
