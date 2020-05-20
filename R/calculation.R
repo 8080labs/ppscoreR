@@ -1,3 +1,6 @@
+#source the F1_score function from F1_score.R in the same directory
+source("F1_score.R")
+
 CV_ITERATIONS <- 4
 
 NUMERIC_AS_CATEGORIC_BREAKPOINT <- 15
@@ -121,9 +124,6 @@ infer_task <- function(df, x, y) {
   }
 }
 
-
-}
-
 feature_is_id <- function(df, x) {
   ## Returns Boolean if t he feature column x is an ID
   if (class(df[[x]]) == "character" | class(df[[x]]) == "factor") {
@@ -147,8 +147,10 @@ maybe_sample <- function(df, sample) {
   return(df)
 }
 
+#' @title
 #' Calculate the Predictive Power Score (PPS) for "x predicts y"
 #'
+#' @description
 #' The Predictive Power Score (PPS) always ranges form 0 to 1 and is data-type agnostic.
 #' \itemize{
 #'   \item A score of 0 means that the column x cannot predict the column y better than a naive baseline model.
@@ -226,6 +228,7 @@ score <- function(df, x, y, task = NULL, sample = 5000) {
   )
 }
 
+#' @title
 #' Calculate the Predictive Power Score (PPS) natrix for all columns in the data frame
 #'
 #' @param df `data.frame`. The data frame that contains the data

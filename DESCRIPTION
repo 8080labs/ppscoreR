@@ -14,8 +14,7 @@ Authors@R:
            family = "Ngo",
            role = "cre",
            email = "hoanganhngo610@gmail.com"))
-Maintainer: c(Tobias Krabel <tobias.krabel@8080labs.com>, 
-              Hoang Anh Ngo <hoanganhngo610@gmail.com>)
+Maintainer: Hoang Anh Ngo <hoanganhngo610@gmail.com>
 Description: The PPS is an asymmetric, data-type-agnostic score that can detect linear or non-linear relationships between two columns. 
     The score ranges from 0 (no predictive power) to 1 (perfect predictive power). 
     It can be used as an alternative to the correlation (matrix).
@@ -27,7 +26,9 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0.9000
 Imports: 
-    hydroGOF
+    hydroGOF,
+    MLmetrics,
+    utils
 Suggests: 
     testthat,
     knitr,
