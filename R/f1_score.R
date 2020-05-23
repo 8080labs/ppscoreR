@@ -10,9 +10,9 @@
 #' @param y_true Ground truth (correct) 0-1 labels vector
 #' @return a table of Confusion Matrix
 
-ConfusionMatrix <- function(y_pred, y_true) {
-  Confusion_Mat <- table(y_true, y_pred)
-  return(Confusion_Mat)
+confusion_matrix <- function(y_pred, y_true) {
+  confusion_matrix <- table(y_true, y_pred)
+  return(confusion_matrix)
 }
 
 #' @title
@@ -25,18 +25,18 @@ ConfusionMatrix <- function(y_pred, y_true) {
 #' @param y_true Ground truth (correct) 0-1 labels vector
 #' @return a data.frame of Confusion Matrix
 
-ConfusionDF <- function(y_pred, y_true) {
-  Confusion_DF <- transform(as.data.frame(ConfusionMatrix(y_pred, y_true)),
+confusion_df <- function(y_pred, y_true) {
+  confusion_df <- transform(as.data.frame(confusion_matrix(y_pred, y_true)),
                             y_true = as.character(y_true),
                             y_pred = as.character(y_pred),
                             Freq = as.integer(Freq))
-  return(Confusion_DF)
+  return(confusion_df)
 }
 
 utils::globalVariables("Freq")
 
 #' @title
-#' Precision
+#' precision
 #'
 #' @description
 #' Compute the precision score (of multi-class problems) using different types of averaging. \cr
@@ -53,55 +53,55 @@ utils::globalVariables("Freq")
 #' the type of averaging performed on the data.
 #' @return The precision score
 
-Precision <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "binary") {
-  Confusion_DF <- ConfusionDF(y_pred, y_true)
+precision <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "binary") {
+  confusion_df <- ConfusionDF(y_pred, y_true)
   if (average == "binary") {
     if (is.null(positive) == TRUE) {
-      positive <- as.character(Confusion_DF[1,1])
+      positive <- as.character(confusion_df[1,1])
     }
-    TP <- as.integer(Confusion_DF[which(Confusion_DF$y_true==positive & Confusion_DF$y_pred==positive),"Freq"])
-    FP <- as.integer(sum(Confusion_DF[which(Confusion_DF$y_true!=positive & Confusion_DF$y_pred==positive), "Freq"]))
-    Precision <- TP/(TP+FP)
+    true_positive <- as.integer(confusion_df[which(confusion_df$y_true==positive & confusion_df$y_pred==positive),"Freq"])
+    false_positive <- as.integer(sum(confusion_df[which(confusion_df$y_true!=positive & confusion_df$y_pred==positive), "Freq"]))
+    precision <- true_positive/(true_positive+false_positive)
   }
   else {
     if (is.null(labels) == TRUE) {
       labels <- unique(c(y_true, y_pred))
     }
 
-    TP <- c()
-    FP <- c()
-    Prec <- c()
+    true_positive <- c()
+    false_positive <- c()
+    prec <- c()
     for (i in c(1:length(labels))) {
       positive <- labels[i]
 
-      tmp_TP <- Confusion_DF[which(Confusion_DF$y_true==positive & Confusion_DF$y_pred==positive), "Freq"]
-      TP[i] <- if (length(tmp_TP)==0) 0 else as.integer(tmp_TP)
+      tmp_true_positive <- confusion_df[which(confusion_df$y_true==positive & confusion_df$y_pred==positive), "Freq"]
+      true_positive[i] <- if (length(tmp_true_positive)==0) 0 else as.integer(tmp_true_positive)
 
-      tmp_FP <- Confusion_DF[which(Confusion_DF$y_true!=positive & Confusion_DF$y_pred==positive), "Freq"]
-      FP[i] <- if (length(tmp_FP)==0) 0 else as.integer(sum(tmp_FP))
+      tmp_false_positive <- confusion_df[which(confusion_df$y_true!=positive & confusion_df$y_pred==positive), "Freq"]
+      false_positive[i] <- if (length(tmp_false_positive)==0) 0 else as.integer(sum(tmp_false_positive))
 
-      Prec[i] <- TP[i] / (TP[i] + FP[i])
+      prec[i] <- true_positive[i] / (true_positive[i] + false_positive[i])
     }
 
     if (average == "micro") {
-      Precision <- sum(TP) / (sum(TP) + sum(FP))
+      precision <- sum(true_positive) / (sum(true_positive) + sum(false_positive))
     }
     else if (average == "macro") {
-      Precision <- mean(Prec)
+      precision <- mean(prec)
     }
     else if (average == "weighted") {
-      Precision <- weighted.mean(Prec, as.vector(table(y_true)[labels]))
+      precision <- weighted.mean(prec, as.vector(table(y_true)[labels]))
     }
   }
-  return(Precision)
+  return(precision)
 }
 
-#' @title Recall
+#' @title recall
 #'
 #' @description
 #' Compute the recall score (of multi-class problems) using different types of averaging. \cr
 #' For more information, please visit the following site:
-#' \url{https://sebastianraschka.com/faq/docs/multiclass-metric.html}
+#' \url{httrue_positives://sebastianraschka.com/faq/docs/multiclass-metric.html}
 #'
 #' @param y_pred Predicted labels vector, as returned by a classifier
 #' @param y_true Ground truth (correct) labels vector (0-1 in the case when `average = "binary"``)
@@ -113,47 +113,47 @@ Precision <- function(y_true, y_pred, positive = NULL, labels = NULL, average = 
 #' the type of averaging performed on the data.
 #' @return The recall score
 
-Recall <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "binary") {
-  Confusion_DF <- ConfusionDF(y_pred, y_true)
+recall <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "binary") {
+  confusion_df <- ConfusionDF(y_pred, y_true)
   if (average == "binary") {
     if (is.null(positive) == TRUE) {
-      positive <- as.character(Confusion_DF[1,1])
+      positive <- as.character(confusion_df[1,1])
     }
-    TP <- as.integer(Confusion_DF[which(Confusion_DF$y_true==positive & Confusion_DF$y_pred==positive),"Freq"])
-    FN <- as.integer(sum(Confusion_DF[which(Confusion_DF$y_true==positive & Confusion_DF$y_pred!=positive), "Freq"]))
-    Recall <- TP/(TP+FN)
+    true_positive <- as.integer(confusion_df[which(confusion_df$y_true==positive & confusion_df$y_pred==positive),"Freq"])
+    false_negative <- as.integer(sum(confusion_df[which(confusion_df$y_true==positive & confusion_df$y_pred!=positive), "Freq"]))
+    recall <- true_positive/(true_positive+false_negative)
   }
   else {
     if (is.null(labels) == TRUE) {
       labels <- unique(c(y_true, y_pred))
     }
 
-    TP <- c()
-    FN <- c()
-    Rec <- c()
+    true_positive <- c()
+    false_negative <- c()
+    rec <- c()
     for (i in c(1:length(labels))) {
       positive <- labels[i]
 
-      tmp_TP <- Confusion_DF[which(Confusion_DF$y_true==positive & Confusion_DF$y_pred==positive), "Freq"]
-      TP[i] <- if (length(tmp_TP)==0) 0 else as.integer(tmp_TP)
+      tmp_true_positive <- confusion_df[which(confusion_df$y_true==positive & confusion_df$y_pred==positive), "Freq"]
+      true_positive[i] <- if (length(tmp_true_positive)==0) 0 else as.integer(tmp_true_positive)
 
-      tmp_FN <- Confusion_DF[which(Confusion_DF$y_true==positive & Confusion_DF$y_pred!=positive), "Freq"]
-      FN[i] <- if (length(tmp_FN)==0) 0 else as.integer(sum(tmp_FN))
+      tmp_false_negative <- confusion_df[which(confusion_df$y_true==positive & confusion_df$y_pred!=positive), "Freq"]
+      false_negative[i] <- if (length(tmp_false_negative)==0) 0 else as.integer(sum(tmp_false_negative))
 
-      Rec[i] <- TP[i] / (TP[i] + FP[i])
+      rec[i] <- true_positive[i] / (true_positive[i] + false_positive[i])
     }
 
     if (average == "micro") {
-      Recall <- sum(TP) / (sum(TP) + sum(FN))
+      recall <- sum(true_positive) / (sum(true_positive) + sum(false_negative))
     }
     else if (average == "macro") {
-      Recall <- mean(Rec)
+      recall <- mean(rec)
     }
     else if (average == "weighted") {
-      Recall <- weighted.mean(Rec, as.vector(table(y_true)[labels]))
+      recall <- weighted.mean(rec, as.vector(table(y_true)[labels]))
     }
   }
-  return(Recall)
+  return(recall)
 }
 
 #' @title
@@ -167,7 +167,7 @@ Recall <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "bi
 #' where an F1 score reaches its best value at 1 and worst score at 0.
 #' The relative contribution of precision and recall to the F1 score are equal.
 #' The formula for the F1 score is: \cr
-#' `F1_score = 2 * (precision * recall) / (precision + recall)` \cr
+#' `f1_score = 2 * (precision * recall) / (precision + recall)` \cr
 #' In the multi-class and multi-label case, this is the average of the F1 score of each class
 #' with weighting depending on the `average` parameter.
 #'
@@ -190,16 +190,16 @@ Recall <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "bi
 #' of each class for the multiclass task.
 #' @export
 
-F1_Score <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "binary") {
+f1_score <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "binary") {
   if (average == "binary") {
-    Confusion_DF <- ConfusionDF(y_pred, y_true)
-    if (is.null(positive) == TRUE) positive <- as.character(Confusion_DF[1,1])
+    confusion_df <- ConfusionDF(y_pred, y_true)
+    if (is.null(positive) == TRUE) positive <- as.character(confusion_df[1,1])
   }
   else {
     if (is.null(labels) == TRUE) labels <- unique(c(y_true, y_pred)) # possible problems if labels are missing from y_*
   }
-  Precision <- Precision(y_true, y_pred, positive = positive, labels = labels, average = average)
-  Recall <- Recall(y_true, y_pred, positive = positive, labels = labels, average = average)
-  F1_score <- 2 * (Precision * Recall) / (Precision + Recall)
-  return(F1_score)
+  precision <- precision(y_true, y_pred, positive = positive, labels = labels, average = average)
+  recall <- recall(y_true, y_pred, positive = positive, labels = labels, average = average)
+  f1_score <- 2 * (precision * recall) / (precision + recall)
+  return(f1_score)
 }
