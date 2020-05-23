@@ -156,7 +156,8 @@ Recall <- function(y_true, y_pred, positive = NULL, labels = NULL, average = "bi
   return(Recall)
 }
 
-#' @title F1 Score
+#' @title
+#' F1 Score
 #'
 #' @description
 #' Compute the F1 Score, also known as balanced F-score or F-measure.
