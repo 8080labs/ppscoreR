@@ -101,7 +101,7 @@ precision <- function(y_true, y_pred, positive = NULL, labels = NULL, average = 
 #' @description
 #' Compute the recall score (of multi-class problems) using different types of averaging. \cr
 #' For more information, please visit the following site:
-#' \url{httrue_positives://sebastianraschka.com/faq/docs/multiclass-metric.html}
+#' \url{https://sebastianraschka.com/faq/docs/multiclass-metric.html}
 #'
 #' @param y_pred Predicted labels vector, as returned by a classifier
 #' @param y_true Ground truth (correct) labels vector (0-1 in the case when `average = "binary"``)
