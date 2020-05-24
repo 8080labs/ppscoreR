@@ -1,5 +1,5 @@
 #source the F1_score function from F1_score.R in the same directory
-source("F1_score.R")
+source("f1_score.R")
 
 CV_ITERATIONS <- 4
 

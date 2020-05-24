@@ -1,0 +1,72 @@
+---
+title: "quadrativ_effect_on_1mio_rows"
+author: "Hoang Anh NGO"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{quadrativ_effect_on_1mio_rows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.ext = "png",
+  fig.align = "center"
+)
+```
+
+```{r setup}
+library(ggplot2)
+library(corrplot)
+
+library(ppscore)
+```
+
+```{r}
+pps_heatmap <- function(pps_mat) {
+  melted_pps_mat <- melt(pps_mat)
+  pps_heatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value)) +
+    geom_tile(color = "white") +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         midpoint = 0, limit = c(-1,1), space = "Lab", 
+                         name="PPS Score") +
+    geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
+    theme_minimal() + 
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 12, hjust = 1)) +
+    theme(axis.title.x = "feature", axis.text.x = axis.ticks.x = element_blank(),
+          axis.title.y = "target", axis.text.y = axis.ticks.y = element_blank(),
+          panel.grid.major = panel.border = panel.background = axis.ticks = element_blank()) +
+    coord_fixed() + 
+  return(pps_heatmap)
+}
+```
+
+```{r}
+x <- runif(1000000, -2, 2)
+error <- runif(1000000, -0.5, 0.5)
+y <- x * x + error
+df <- data.frame(x, error, y)
+```
+
+```{r}
+ggplot(df, aes(x = x, y = y)) +
+  geom_point()
+```
+
+```{r}
+matrix = ppscore::matrix(df)
+matrix
+```
+
+```{r}
+pps_heatmap(matrix)
+```
+
+```{r}
+ppscore::score(df, "x", "y")
+```
+

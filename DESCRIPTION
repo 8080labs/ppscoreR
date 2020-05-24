@@ -35,6 +35,7 @@ Suggests:
     rmarkdown,
     sinew,
     docthis,
-    tidyverse
+    tidyverse,
+    corrplot
 VignetteBuilder: knitr
 URL: https://github.com/8080labs/ppscoreR
