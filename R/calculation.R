@@ -5,6 +5,10 @@ CV_ITERATIONS <- 4
 
 NUMERIC_AS_CATEGORIC_BREAKPOINT <- 15
 
+unique_values <- function(x) {
+  return (length(na.omit(unique(x))))
+}
+
 calculate_model_cv_score <- function(df, target, feature, metric, model) {
 
 }
@@ -23,14 +27,14 @@ normalized_mae_score <- function(model_mae, naive_mae) {
   }
 }
 
- mae_normalizer <- function(df, y, model_score) {
-   ## In case of MAE, calculates the baseline score for y and derives the PPS.
-   df["naive"] = median(df[[y]], na.rm = TRUE)
-   baseline_score = hydroGOF::mae(df[y], df['naive'], na.rm = TRUE)[[1]]
+mae_normalizer <- function(df, y, model_score) {
+  ## In case of MAE, calculates the baseline score for y and derives the PPS.
+  df["naive"] = median(df[[y]], na.rm = TRUE)
+  baseline_score = hydroGOF::mae(df[y], df['naive'], na.rm = TRUE)[[1]]
 
-   ppscore = normalized_mae_score(abs(model_score), baseline_score)
-   mae_normalizer_returnlist = list("ppscore" = ppscore, "baseline_score" = baseline_score)
-   return(mae_normalizer_returnlist)
+  ppscore = normalized_mae_score(abs(model_score), baseline_score)
+  mae_normalizer_returnlist = list("ppscore" = ppscore, "baseline_score" = baseline_score)
+  return(mae_normalizer_returnlist)
 }
 
 normalized_f1_score <- function(model_f1, baseline_f1) {
@@ -66,30 +70,30 @@ TASKS = list(
     "mdodel" = #TODO:add,
     "score_normalizer" = "mae_normalizer"
     ),
-   "classification" = list(
-     "metric_name" = "weighted F1",
-     "metric_key" = "f1_weighted",
-     "mdodel" = #TODO: add,
-     "score_normalizer" = "f1_normalizer"
-   ),
-   "predict_itself" = list(
-     "metric_name" = NULL,
-     "metric_key" = NULL,
-     "mdodel" = NULL,
-     "score_normalizer" = NULL
-   ),
-   "predict_constant" = list(
-     "metric_name" = NULL,
-     "metric_key" = NULL,
-     "mdodel" = NULL,
-     "score_normalizer" = NULL
-   ),
-   "oredict_id" = list(
-     "metric_name" = NULL,
-     "metric_key" = NULL,
-     "mdodel" = NULL,
-     "score_normalizer" = NULL
-   )
+  "classification" = list(
+    "metric_name" = "weighted F1",
+    "metric_key" = "f1_weighted",
+    "mdodel" = #TODO: add,
+    "score_normalizer" = "f1_normalizer"
+  ),
+  "predict_itself" = list(
+    "metric_name" = NULL,
+    "metric_key" = NULL,
+    "mdodel" = NULL,
+    "score_normalizer" = NULL
+  ),
+  "predict_constant" = list(
+    "metric_name" = NULL,
+    "metric_key" = NULL,
+    "mdodel" = NULL,
+    "score_normalizer" = NULL
+  ),
+  "oredict_id" = list(
+    "metric_name" = NULL,
+    "metric_key" = NULL,
+    "mdodel" = NULL,
+    "score_normalizer" = NULL
+  )
 )
 
 infer_task <- function(df, x, y) {
@@ -98,38 +102,40 @@ infer_task <- function(df, x, y) {
     return("predict_itself")
   }
 
-  category_count = length(unique(na.omit(df[x])))
+  # NOTE (TK): let's use magrittr here (or maybe even dplyr altogether)
+  # so the syntax becomes. df[x] %>% na.omit %>% unique %>% length
+  category_count <- unique_values(df[x])
   if (category_count == 1) {
     return("predict_constant")
   }
   if (category_count == 2) {
     return("classification")
   }
-  if (category_count == nrow(df[y]) & (class(df[[y]]) == "character" | class(df[[y]]) == "factor")) {
+  if (category_count == nrow(df[y]) & (is.character(df[[y]]) | is.factor(df[[y]]))) {
     #TODO:is_string_dtype or is_categorical_dtype)
     return("predict_id")
   }
-  if (category_count <= NUMERIC_AS_CATEGORIC_BREAKPOINT & class(df[[y]]) == "numeric") {
+  if (category_count <= NUMERIC_AS_CATEGORIC_BREAKPOINT & is.numeric(df[[y]])) {
     #TODO:is_numeric_dtype
     return("classification")
   }
 
-  if (class(df[[y]]) == "logical" | class(df[[y]]) == "character" | class(df[[y]]) == "factor") {
+  if (is.logical(df[[y]]) | is.character(df[[y]]) | is.factor(df[[y]]))) {
     return("classification")
   }
   #TODO: raise exceptions
 
-  if (class(df[[y]]) == "numeric") {
+  if (is.numeric(df[[y]])) {
     return("regression")
   }
 }
 
 feature_is_id <- function(df, x) {
   ## Returns Boolean if t he feature column x is an ID
-  if (class(df[[x]]) == "character" | class(df[[x]]) == "factor") {
+  if (is.character(df[[x]]) | is.factor(df[[x]])) {
     return(FALSE)
   }
-  category_count = length(unique(na.omit(df[x])))
+  category_count = unique_values(df[x])
   return(category_count == nrow(df[x]))
 }
 
